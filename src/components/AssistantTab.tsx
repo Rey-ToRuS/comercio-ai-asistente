@@ -23,7 +23,7 @@ import type {
   Product,
   SheetTemplate,
 } from '../types';
-import { speakSpanish } from '../utils/speechService';
+import { speakSpanish, subscribeVoiceDiagnostic, type VoiceDiagnostic } from '../utils/speechService';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { interpretMerchantCommand } from '../services/aiProviderService';
 import { formatCurrency, formatShortTime, MOVEMENT_TYPE_LABELS, PAYMENT_METHOD_LABELS } from '../utils/format';
@@ -98,6 +98,20 @@ export function AssistantTab({
   const [pendingAction, setPendingAction] = useState<ParsedAssistantAction | null>(null);
   const [editableAmount, setEditableAmount] = useState<string>('');
   const [editablePayment, setEditablePayment] = useState<PaymentMethod>('efectivo');
+  const [voiceDiag, setVoiceDiag] = useState<VoiceDiagnostic>({
+    hasSpanish: false,
+    bestVoice: null,
+    spanishVoices: [],
+    allVoices: [],
+    isWindowsEnglishOnly: false,
+  });
+  const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+
+  useEffect(() => {
+    return subscribeVoiceDiagnostic((diag) => {
+      setVoiceDiag(diag);
+    });
+  }, []);
 
   const processCommand = useCallback(
     async (raw: string) => {
@@ -292,6 +306,58 @@ export function AssistantTab({
               </button>
             </div>
           </form>
+
+          {/* Barra de estado de voz del asistente */}
+          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, padding: '8px 12px', background: 'var(--panel-bg)', borderRadius: 10, border: '1px solid var(--border-color)', fontSize: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Volume2 size={15} style={{ color: voiceDiag.hasSpanish ? '#10b981' : '#f59e0b' }} />
+              {voiceDiag.hasSpanish ? (
+                <span>
+                  Voz activa: <strong>{voiceDiag.bestVoice?.name || 'Español'}</strong> ({voiceDiag.bestVoice?.lang || 'es-AR'})
+                </span>
+              ) : (
+                <span style={{ color: '#f59e0b', fontWeight: 600 }}>
+                  ⚠️ Tu PC solo tiene voces en inglés (Microsoft David)
+                </span>
+              )}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {voiceDiag.hasSpanish ? (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  style={{ padding: '2px 10px', fontSize: 11 }}
+                  onClick={() => {
+                    speakSpanish('Hola, el asistente comercial de ComercioAI está listo en perfecto español.');
+                  }}
+                >
+                  ▶️ Probar voz
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{ padding: '2px 10px', fontSize: 11, borderColor: '#f59e0b', color: '#f59e0b' }}
+                  onClick={() => setShowVoiceHelp(!showVoiceHelp)}
+                >
+                  {showVoiceHelp ? 'Ocultar ayuda' : '¿Cómo activar voz en español en PC?'}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {showVoiceHelp && !voiceDiag.hasSpanish && (
+            <div style={{ marginTop: 6, padding: '10px 14px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', fontSize: 12, lineHeight: 1.5 }}>
+              <strong>¿Por qué se escucha en inglés en Windows?</strong>
+              <p style={{ margin: '4px 0 6px 0' }}>
+                Windows por defecto solo incluye la voz en inglés de <em>Microsoft David</em> a menos que se abra en Edge o se agregue el paquete de idioma regional.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div>👉 <strong>Solución más rápida (1 clic sin instalar nada):</strong> Abrí ComercioAI en <strong>Microsoft Edge</strong> en tu PC. Edge ya incluye las voces naturales en español de Tomás y Salomé sin configurar nada.</div>
+                <div>👉 <strong>O en Windows:</strong> Andá a <em>Inicio &gt; Configuración &gt; Hora e idioma &gt; Voz &gt; Agregar voces</em> y elegí <strong>Español (Argentina o México)</strong>.</div>
+              </div>
+            </div>
+          )}
 
           {voice.error && <div className="notice-bar">{voice.error}</div>}
 

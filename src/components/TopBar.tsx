@@ -14,6 +14,7 @@ import {
   FileSpreadsheet,
   ChevronDown,
   Sparkles,
+  Eye,
 } from 'lucide-react';
 import type { AppSettings, SheetTemplate, UserRole, WeatherContext } from '../types';
 
@@ -50,6 +51,28 @@ export function TopBar({
 }: TopBarProps) {
   const [now, setNow] = useState(() => new Date());
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [seniorMode, setSeniorMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('comercio_senior_mode') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (seniorMode) {
+        document.body.classList.add('senior-mode');
+      } else {
+        document.body.classList.remove('senior-mode');
+      }
+    }
+  }, [seniorMode]);
+
+  const toggleSeniorMode = () => {
+    const next = !seniorMode;
+    setSeniorMode(next);
+    localStorage.setItem('comercio_senior_mode', String(next));
+  };
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -224,6 +247,17 @@ export function TopBar({
           >
             <Sparkles size={14} className="text-emerald-400" />
             <span>Configurar</span>
+          </button>
+
+          {/* Botón de Modo Senior / Letra Grande */}
+          <button
+            type="button"
+            className={`ambient-chip ambient-chip-btn ${seniorMode ? 'usb-active' : ''}`}
+            onClick={toggleSeniorMode}
+            title={seniorMode ? 'Desactivar Modo Senior (volver a letra estándar)' : 'Activar Modo Senior (letra grande y alta legibilidad)'}
+          >
+            <Eye size={14} />
+            <span>{seniorMode ? 'Letra Normal' : 'Modo Fácil'}</span>
           </button>
 
           {/* Manual de uso offline */}

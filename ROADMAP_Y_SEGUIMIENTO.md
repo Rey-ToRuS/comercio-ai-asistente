@@ -14,7 +14,7 @@
 ## 📈 Gráfico de Porcentaje de Avance General
 
 ```text
-[█████████████████████████████████████░░░] 92% Completado
+[███████████████████████████████████████░] 97% Completado
 ```
 
 | Módulo / Etapa | Estado | Porcentaje |
@@ -22,9 +22,9 @@
 | **Etapa 1: Arquitectura Offline-First y Persistencia Local** | 🟢 Completado | 100% |
 | **Etapa 2: Motor de Planillas, Stock y Libro Diario** | 🟢 Completado | 100% |
 | **Etapa 3: Onboarding, Login Local y Sistema de Roles** | 🟢 Completado | 100% |
-| **Etapa 4: Hub de Redes Sociales con Lógica Contextual** | 🟢 Completado | 95% |
-| **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 95% |
-| **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟡 En Progreso | 70% |
+| **Etapa 4: Hub de Redes Sociales con Lógica Contextual** | 🟢 Completado | 100% |
+| **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 100% |
+| **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟢 Completado | 90% |
 
 ---
 
@@ -59,11 +59,13 @@
 
 ### 🟢 Etapa 4: Accesibilidad, Audio en Español Nítido y Modo Senior
 - 🟢 **Síntesis de Voz en Español Argentino / Latinoamericano (`speechService.ts`):**
-  ~~<span style="color:#e11d48">El audio salía con acento inglés fonético incomprensible</span>~~ **<span style="color:#16a34a">Implementado: Selección forzada y prioritaria de voces nativas en español argentino (`es-AR`) o latinoamericano (`es-419`), con cadencia pausada (rate: 0.94) y nitidez total sin fonética inglesa.</span>**
+  ~~<span style="color:#e11d48">El audio salía con acento inglés fonético incomprensible</span>~~ **<span style="color:#16a34a">Implementado: Detección y selección automática de voces en español argentino (`es-AR`) y latinoamericano (`es-419`, `es-MX`, `es-US`). En Windows, se evita forzar a Microsoft David y se añade banner con recomendación de 1 clic para Microsoft Edge (voces naturales de Tomás y Salomé sin instalar nada) o agregar el paquete en Windows.</span>**
+- 🟢 **Modo Senior / Alta Accesibilidad y Letra Grande:**
+  ~~<span style="color:#e11d48">Interfaz en tamaño estándar sin ajuste para adultos mayores</span>~~ **<span style="color:#16a34a">Implementado: Botón en barra superior 'Modo Fácil' con tipografía ampliada (17.5px+), botones táctiles de mínimo 48px y alto contraste para personas grandes con poca experiencia tecnológica.</span>**
 - 🟢 **Acciones en 2 toques:** Botón de 1 toque para redes y accesos directos principales en pantalla de inicio.
-- 🟢 **Comando por voz prioritario:** Micrófono grande con reconocimiento de voz en español argentino (`es-AR`) y lectura de respuesta en voz alta clara.
+- 🟢 **Comando por voz y texto prioritario:** Micrófono grande con reconocimiento de voz en español argentino (`es-AR`), campo de texto para consultas escritas y lectura de respuesta en voz alta clara.
 
-### 🟡 Etapa 5: Empaquetado y Autonomía de Distribución
+### 🟢 Etapa 5: Empaquetado y Autonomía de Distribución
 - 🟢 **PWA (Progressive Web App):** Manifiesto y Service Worker preparados para instalar como aplicación en el celular o PC.
 - 🟢 **Capacitor Configurado:** Base lista para compilar como archivo `.apk` de Android instalable directamente por cable USB o descarga directa.
 - 🟢 **Aclaración de Infraestructura:**
@@ -85,3 +87,6 @@
   ~~<span style="color:#e11d48">Audio con voz en inglés por defecto que no se entendía</span>~~ **<span style="color:#16a34a">Se implementó `speechService.ts` forzando voces nativas en español argentino (es-AR) o latinoamericano con dicción limpia y velocidad calibrada.</span>**
 - **2026-11-19 (Entrada de Texto y Consultas en Asistente):**
   ~~<span style="color:#e11d48">Asistente en vista previa interactiva solo permitía pulsar el micrófono o chips fijos</span>~~ **<span style="color:#16a34a">Se incorporó campo de texto dedicado con botón de envío y procesamiento en tiempo real (extracciones de montos, medios de pago QR/transferencia/efectivo, gastos, ventas y consultas de balance en caja).</span>**
+- **2026-11-19 (Diagnóstico de Voz en PC con Windows & Modo Senior):**
+  ~~<span style="color:#e11d48">En PC Windows sin paquete de idioma español instalado se forzaba la voz inglesa Microsoft David</span>~~ **<span style="color:#16a34a">Se incorporó diagnóstico reactivo de voz: auto-selección de voces en español disponibles, prevención de fonética inglesa y guía de 1 clic para abrir en Microsoft Edge (que ya incluye voces argentinas y latinas ultra-naturales) o agregar el paquete en Windows. Se sumó además el 'Modo Fácil / Senior' en la barra superior con tipografía grande y alta visibilidad para personas mayores.</span>**
+
