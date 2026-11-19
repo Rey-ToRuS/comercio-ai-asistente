@@ -340,6 +340,8 @@ Analizá la foto del producto y devolvé EXCLUSIVAMENTE un JSON válido:
   };
 }
 
+import { analyzeCurrentContext } from './contextEngine';
+
 export async function generateSocialContent(params: {
   products: Product[];
   format: SocialDraft['format'];
@@ -353,36 +355,40 @@ export async function generateSocialContent(params: {
   const { products, format, tone, includeWeatherLocation, weather, settings, template, customNote } = params;
   const nowStr = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
   const weatherBadge = includeWeatherLocation ? formatWeatherLocationBadge(weather) : '';
+  const context = analyzeCurrentContext(template.businessType, weather, settings.businessName);
+
   const productSummary = products
     .map((p) => `- ${p.name} ($${p.price.toLocaleString('es-AR')}, ${p.category}${p.description ? `, ${p.description}` : ''})`)
     .join('\n');
 
-  // Generador offline instantáneo si no hay internet o está en modo local
+  // Generador offline inteligente si no hay internet o está en modo local
   if (!navigator.onLine || settings.aiProvider === 'local' || !settings.aiApiKey.trim()) {
     const main = products[0];
-    const placeIntro = weatherBadge ? `Hoy en ${weatherBadge} (${nowStr} hs)` : `Hoy a las ${nowStr} hs`;
+    const defaultHook = context.suggestedHooks[0] || `${weatherBadge ? `Hoy en ${weatherBadge}` : `Hoy a las ${nowStr} hs`}, mirá lo que tenemos listo`;
     const priceLine = products
       .map((p) => `• ${p.name} — $${p.price.toLocaleString('es-AR')}`)
       .join('\n');
 
-    let hook = `${placeIntro}, mirá lo que recién salió a la mesa`;
+    let hook = defaultHook;
     let caption = '';
 
     if (format === 'reel_script') {
-      hook = `Plano detalle de ${main?.name || 'tus productos'} con luz natural (${weatherBadge || 'en el puesto'}).`;
-      caption = `🎬 GUIÓN REEL / TIKTOK (15 seg)\n\n1. [0-3s] Gancho: "${placeIntro} te muestro esto que vuela..."\n2. [3-10s] Mostrar en mano:\n${priceLine}\n3. [10-15s] Cierre: "${customNote || 'Escribinos o pasá hoy mismo por ' + settings.businessName}!"`;
+      hook = `Plano rápido de ${main?.name || 'tus productos'} en primer plano. ${context.marketingFocus}`;
+      caption = `🎬 GUIÓN REEL / TIKTOK (15 seg)\n\n1. [0-3s] Gancho: "${defaultHook}"\n2. [3-10s] Mostrar en mano con precio visible:\n${priceLine}\n3. [10-15s] Cierre: "${customNote || 'Pasate hoy mismo por ' + settings.businessName + ' o escribinos para reservar!'}"`;
     } else if (format === 'whatsapp_status') {
-      caption = `${placeIntro} ✨\n${priceLine}\n\n${customNote || 'Consultanos por acá, stock del día disponible.'}\n— ${settings.businessName}`;
+      caption = `✨ ${defaultHook}\n\n${priceLine}\n\n${customNote || 'Consultanos por acá, stock en tiempo real disponible.'}\n— ${settings.businessName}`;
     } else if (format === 'fair_promo') {
-      caption = `📍 ${placeIntro} ya estamos atendiendo en ${settings.businessName}.\n\nDestacados de hoy:\n${priceLine}\n\n${customNote || '¡Pasá a verlos en persona antes de que se agoten!'}`;
+      caption = `📍 ${defaultHook}\n\nDestacados del momento:\n${priceLine}\n\n${customNote || '¡Pasá a vernos antes de que vuelen!'}`;
     } else {
-      caption = `${placeIntro} ✨\nEn ${settings.businessName} tenemos disponible:\n\n${priceLine}\n\n${customNote || 'Stock actualizado al momento. Consultanos por mensaje directo.'}`;
+      caption = `✨ ${defaultHook}\n\nEn ${settings.businessName} encontrás:\n${priceLine}\n\n💡 ${context.marketingFocus}\n\n${customNote || 'Consultanos por mensaje directo o WhatsApp.'}`;
     }
 
     const hashtags = [
       `#${settings.businessName.replace(/[^a-zA-Z0-9]/g, '') || 'ComercioLocal'}`,
       `#${template.businessType}`,
       ...(weather.city ? [`#${weather.city.replace(/[^a-zA-Z0-9]/g, '')}`] : []),
+      ...(context.climateState === 'calor_extremo' ? ['#Calor', '#Verano', '#BebidasFrias', '#Helados'] : []),
+      ...(context.climateState === 'frio_intenso' ? ['#Invierno', '#Frio', '#Chocolates', '#Cafe'] : []),
       '#Emprendedores',
       '#StockDisponible',
     ];
@@ -391,26 +397,34 @@ export async function generateSocialContent(params: {
   }
 
   const formatLabels: Record<SocialDraft['format'], string> = {
-    instagram_post: 'Post de Instagram listo para publicar',
+    instagram_post: 'Post de Instagram listo para publicar con gancho y llamada a la acción',
     reel_script: 'Guión corto (15-20s) para Reel / TikTok con escenas y texto en pantalla',
-    whatsapp_status: 'Texto breve y directo para Estado de WhatsApp',
-    fair_promo: 'Anuncio en vivo para atraer gente al puesto / feria hoy',
+    whatsapp_status: 'Texto breve, directo y tentador para Estado de WhatsApp',
+    fair_promo: 'Anuncio en vivo para atraer gente al puesto / local ahora',
   };
 
-  const systemPrompt = `Sos un creador de contenido comercial especialista en redes locales argentinas para "${settings.businessName}" (rubro: ${template.name}).
+  const systemPrompt = `Sos un estratega de marketing comercial y redes sociales para negocios argentinos (${settings.businessName}, rubro: ${template.name}).
+REGLAS CONTEXTUALES ESTRICTAS:
+- Clima y Sensación: ${context.climateState} (${context.temperatureC !== undefined ? `${context.temperatureC}°C` : 'temperatura actual'}).
+- Foco Comercial Requerido: ${context.marketingFocus}
+- Si hace calor extremo (>30°C), enfatizá el alivio del calor (bebidas heladas, cosas frescas, liviandad).
+- Si hace frío o llueve, enfatizá el confort, abrigo o antojos dulces.
+- Tono argentino comercial, cercano, convincente pero sin exageraciones innecesarias.
+
 Devolvé EXCLUSIVAMENTE un JSON válido:
 {
-  "hook": "Frase gancho corta de apertura",
-  "caption": "Texto completo listo para copiar o compartir",
+  "hook": "Frase gancho atractiva de apertura alineada al clima y momento",
+  "caption": "Texto completo y persuasivo listo para publicar",
   "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5"]
 }`;
 
   const userPrompt = `Formato: ${formatLabels[format]}
 Tono: ${tone}
-Hora actual: ${nowStr} hs
-${weatherBadge ? `Contexto real de ubicación y clima (aprovechalo con naturalidad): ${weatherBadge}` : 'Sin datos de clima/ubicación.'}
-${customNote ? `Nota del comerciante: ${customNote}` : ''}
-Productos del stock real:
+Hora actual: ${nowStr} hs (${context.timeLabel})
+Ubicación/Barrio: ${context.locationLabel}
+${weatherBadge ? `Contexto del clima: ${weatherBadge}` : ''}
+${customNote ? `Aclaración extra del comerciante: ${customNote}` : ''}
+Productos reales disponibles en stock:
 ${productSummary}`;
 
   const raw = await callProviderText(settings, systemPrompt, userPrompt);

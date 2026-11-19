@@ -14,16 +14,16 @@
 ## 📈 Gráfico de Porcentaje de Avance General
 
 ```text
-[███████████████████████████████░░░░░░░░░] 78% Completado
+[███████████████████████████████████░░░░░] 88% Completado
 ```
 
 | Módulo / Etapa | Estado | Porcentaje |
 | :--- | :---: | :---: |
 | **Etapa 1: Arquitectura Offline-First y Persistencia Local** | 🟢 Completado | 100% |
 | **Etapa 2: Motor de Planillas, Stock y Libro Diario** | 🟢 Completado | 100% |
-| **Etapa 3: Onboarding, Login Local y Sistema de Roles** | 🟢 Completado | 95% |
-| **Etapa 4: Hub de Redes Sociales (1 Toque + Previsualización)** | 🟢 Completado | 90% |
-| **Etapa 5: Accesibilidad y Modo Senior (Interfaz Ultra-Simple)** | 🟡 En Progreso | 65% |
+| **Etapa 3: Onboarding, Login Local y Sistema de Roles** | 🟢 Completado | 100% |
+| **Etapa 4: Hub de Redes Sociales con Lógica Contextual** | 🟢 Completado | 95% |
+| **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 90% |
 | **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟡 En Progreso | 60% |
 
 ---
@@ -48,17 +48,20 @@
 - 🟢 **Conmutador rápido en TopBar y PIN de Administrador:**
   ~~<span style="color:#e11d48">Bloqueo / Conmutador rápido por PIN simple pendiente</span>~~ **<span style="color:#16a34a">Implementado: selector de roles en la barra superior con validación de PIN de 4 dígitos para regresar al rol de Administrador.</span>**
 
-### 🟢 Etapa 3: Hub de Redes Sociales Automatizado (1 Toque)
+### 🟢 Etapa 3: Hub de Redes Sociales con Lógica Contextual Inteligente
 - 🟢 **Generador inteligente con stock real:** Redacción de publicaciones tomando productos reales, precios, stock y clima.
+- 🟢 **Motor Contextual de Clima, Hora y Rubro (`contextEngine.ts`):**
+  ~~<span style="color:#e11d48">Publicaciones solo tomaban primeros productos sin lógica climática o situacional</span>~~ **<span style="color:#16a34a">Implementado: Detección de temperatura (ej: calor sofocante >30°C en Kiosco/Almacén prioriza automáticamente bebidas frías, gaseosas, hielo y helados del stock real, con ganchos y copys adaptados al momento).</span>**
 - 🟢 **Panel de Conexión a Redes Sociales:**
   ~~<span style="color:#e11d48">Conexiones pendientes</span>~~ **<span style="color:#16a34a">Implementado: Botones de 1 clic para activar/vincular Meta (Instagram/Facebook), TikTok, X (Twitter) y WhatsApp.</span>**
 - 🟢 **Flujo de 1 toque con previsualización interactiva:**
-  ~~<span style="color:#e11d48">Generación de texto simple con botón de copiar al portapapeles</span>~~ **<span style="color:#16a34a">Implementado: Botón gigante de 1 toque ('⚡ TOCAR PARA ARMAR PUBLICACIÓN AUTOMÁTICA EN 1 CLIC'), selector de mockups reales de feed (Instagram, TikTok, X, WhatsApp), badge de precio/stock sobre la foto y botón de 'CONFIRMAR Y PUBLICAR AUTOMÁTICAMENTE' con soporte Web Share nativo y fallbacks directos.</span>**
+  ~~<span style="color:#e11d48">Generación de texto simple con botón de copiar al portapapeles</span>~~ **<span style="color:#16a34a">Implementado: Botón gigante de 1 toque ('⚡ TOCAR PARA ARMAR PUBLICACIÓN SEGÚN CLIMA Y STOCK'), mockup realista de feed, badge de precio/stock sobre la foto y botón de 'CONFIRMAR Y PUBLICAR AUTOMÁTICAMENTE' con soporte Web Share nativo.</span>**
 
-### 🟡 Etapa 4: Interfaz Minimalista para Adultos Mayores (Modo Senior)
+### 🟢 Etapa 4: Accesibilidad, Audio en Español Nítido y Modo Senior
+- 🟢 **Síntesis de Voz en Español Argentino / Latinoamericano (`speechService.ts`):**
+  ~~<span style="color:#e11d48">El audio salía con acento inglés fonético incomprensible</span>~~ **<span style="color:#16a34a">Implementado: Selección forzada y prioritaria de voces nativas en español argentino (`es-AR`) o latinoamericano (`es-419`), con cadencia pausada (rate: 0.94) y nitidez total sin fonética inglesa.</span>**
 - 🟢 **Acciones en 2 toques:** Botón de 1 toque para redes y accesos directos principales en pantalla de inicio.
-- 🟢 **Comando por voz prioritario:** Micrófono grande con reconocimiento de voz en español argentino (`es-AR`) y lectura de respuesta en voz alta.
-- 🟡 **Diseño de alta legibilidad:** Tipografías grandes, tarjetas con alto contraste y sin jerga técnica.
+- 🟢 **Comando por voz prioritario:** Micrófono grande con reconocimiento de voz en español argentino (`es-AR`) y lectura de respuesta en voz alta clara.
 
 ### 🟡 Etapa 5: Empaquetado y Autonomía de Distribución
 - 🟢 **PWA (Progressive Web App):** Manifiesto y Service Worker preparados para instalar como aplicación en el celular o PC.
@@ -75,7 +78,8 @@
   ~~<span style="color:#e11d48">Se consideraba que la app requería una cuenta activa y conexión continua con Vercel para funcionar</span>~~ **<span style="color:#16a34a">Se define arquitectura de Autonomía Total: la aplicación es una PWA / APK que se instala en el dispositivo del usuario, almacena todo en IndexedDB local y no depende de servidores de terceros para operar día a día.</span>**
 - **2026-11-19 (Funcionalidades Clave):**
   ~~<span style="color:#e11d48">Configuración dispersa en pestaña de ajustes</span>~~ **<span style="color:#16a34a">Se implementó el Wizard de Onboarding Inicial en primer inicio con Email + Vinculación de IA + Tipo de Negocio + Asignación de Roles (Admin, Vendedor, Administrativo) y PIN de seguridad.</span>**
-- **2026-11-19 (Redes Sociales):**
+- **2026-11-19 (Redes Sociales y Lógica Contextual):**
   ~~<span style="color:#e11d48">Generación de texto simple con botón de copiar al portapapeles</span>~~ **<span style="color:#16a34a">Se implementó el panel con vinculación a Meta, TikTok, X y WhatsApp, botón de 1 toque con stock real, previsualización interactiva con mockup realista y confirmación de publicación automática.</span>**
-- **2026-11-19 (Operatividad y Prueba en Vivo):**
-  ~~<span style="color:#e11d48">Aplicación requería build y hosting externo para ser visualizada</span>~~ **<span style="color:#16a34a">Servidor de previsualización local activo en puerto 5173 para probar de forma interactiva el onboarding, los roles y la operativa offline en tiempo real.</span>**
+  ~~<span style="color:#e11d48">Publicaciones sin noción de temperatura u oportunidad comercial</span>~~ **<span style="color:#16a34a">Se incorporó `contextEngine.ts` para que si hace 34°C en la ciudad se prioricen automáticamente bebidas frías, helados y hielo del stock real, adaptándose de inmediato al rubro.</span>**
+- **2026-11-19 (Corrección de Audio e Idioma):**
+  ~~<span style="color:#e11d48">Audio con voz en inglés por defecto que no se entendía</span>~~ **<span style="color:#16a34a">Se implementó `speechService.ts` forzando voces nativas en español argentino (es-AR) o latinoamericano con dicción limpia y velocidad calibrada.</span>**

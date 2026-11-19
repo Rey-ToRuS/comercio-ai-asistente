@@ -23,6 +23,7 @@ import type {
   Product,
   SheetTemplate,
 } from '../types';
+import { speakSpanish } from '../utils/speechService';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { interpretMerchantCommand } from '../services/aiProviderService';
 import { formatCurrency, formatShortTime, MOVEMENT_TYPE_LABELS, PAYMENT_METHOD_LABELS } from '../utils/format';
@@ -323,12 +324,7 @@ export function AssistantTab({
                         type="button"
                         className="btn btn-sm"
                         onClick={() => {
-                          window.speechSynthesis.cancel();
-                          const utter = new SpeechSynthesisUtterance(
-                            pendingAction.answer.replace(/[📘•]/gu, '')
-                          );
-                          utter.lang = 'es-AR';
-                          window.speechSynthesis.speak(utter);
+                          speakSpanish(pendingAction.answer);
                         }}
                       >
                         <Volume2 size={14} />

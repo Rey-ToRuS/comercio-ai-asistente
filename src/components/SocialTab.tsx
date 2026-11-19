@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { AppSettings, Product, SheetTemplate, SocialDraft, SocialPlatformId, WeatherContext } from '../types';
 import { generateSocialContent } from '../services/aiProviderService';
+import { analyzeCurrentContext, filterProductsByContext } from '../services/contextEngine';
 import { formatWeatherLocationBadge } from '../services/weatherService';
 import { formatCurrency } from '../utils/format';
 import { dataUrlToBlob } from '../utils/image';
@@ -127,13 +128,14 @@ export function SocialTab({
     }
   };
 
-  // 1-Toque rápido automático (ideal para personas mayores o momentos ocupados)
+  const currentContext = analyzeCurrentContext(template.businessType, weather, settings.businessName);
+
+  // 1-Toque rápido automático con lógica contextual (clima, hora, rubro y stock)
   const handleQuickOneTouch = async () => {
-    // Tomar un producto con stock destacado
-    const inStock = products.filter((p) => p.stock > 0);
-    const chosen = inStock.length > 0 ? [inStock[Math.floor(Math.random() * inStock.length)]] : products.slice(0, 1);
+    const contextualMatches = filterProductsByContext(products, currentContext);
+    const chosen = contextualMatches.length > 0 ? contextualMatches.slice(0, 2) : products.slice(0, 1);
     if (chosen.length > 0) {
-      setSelectedIds([chosen[0].id]);
+      setSelectedIds(chosen.map((p) => p.id));
     }
     await handleGenerate(chosen);
   };
@@ -326,6 +328,19 @@ export function SocialTab({
             {connectedSocials.whatsapp && <Check className="h-4 w-4 text-emerald-400" />}
           </button>
         </div>
+      </div>
+
+      {/* Indicador de Foco Contextual Inteligente */}
+      <div className="mb-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-300 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-base">🧠</span>
+          <span>
+            <strong>Foco Contextual Activo:</strong> {currentContext.marketingFocus}
+          </span>
+        </div>
+        <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded">
+          {currentContext.temperatureC !== undefined ? `${currentContext.temperatureC}°C · ` : ''}{currentContext.timeLabel}
+        </span>
       </div>
 
       {/* Botón Gigante de 1 Toque (Modo Senior / Ultra Simple) */}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { BookOpen, Search, Volume2, X } from 'lucide-react';
 import { MANUAL_SECTIONS, searchManualSections, type ManualSection } from '../data/manualKnowledgeBase';
+import { speakSpanish, stopSpeaking } from '../utils/speechService';
 
 interface ManualModalProps {
   open: boolean;
@@ -31,13 +32,7 @@ export function ManualModal({ open, onClose, onTryVoiceCommand }: ManualModalPro
   if (!open) return null;
 
   const speakSection = (section: ManualSection) => {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(
-      `${section.title}. ${section.summary}. ${section.steps.join('. ')}`
-    );
-    utter.lang = 'es-AR';
-    window.speechSynthesis.speak(utter);
+    speakSpanish(`${section.title}. ${section.summary}. ${section.steps.join('. ')}`);
   };
 
   return (
@@ -57,7 +52,7 @@ export function ManualModal({ open, onClose, onTryVoiceCommand }: ManualModalPro
             type="button"
             className="btn btn-icon btn-ghost"
             onClick={() => {
-              if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+              stopSpeaking();
               onClose();
             }}
             aria-label="Cerrar manual"
