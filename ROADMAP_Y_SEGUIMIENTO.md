@@ -14,7 +14,7 @@
 ## 📈 Gráfico de Porcentaje de Avance General
 
 ```text
-[███████████████████████████████████░░░░░] 88% Completado
+[█████████████████████████████████████░░░] 92% Completado
 ```
 
 | Módulo / Etapa | Estado | Porcentaje |
@@ -23,8 +23,8 @@
 | **Etapa 2: Motor de Planillas, Stock y Libro Diario** | 🟢 Completado | 100% |
 | **Etapa 3: Onboarding, Login Local y Sistema de Roles** | 🟢 Completado | 100% |
 | **Etapa 4: Hub de Redes Sociales con Lógica Contextual** | 🟢 Completado | 95% |
-| **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 90% |
-| **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟡 En Progreso | 60% |
+| **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 95% |
+| **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟡 En Progreso | 70% |
 
 ---
 
@@ -83,3 +83,5 @@
   ~~<span style="color:#e11d48">Publicaciones sin noción de temperatura u oportunidad comercial</span>~~ **<span style="color:#16a34a">Se incorporó `contextEngine.ts` para que si hace 34°C en la ciudad se prioricen automáticamente bebidas frías, helados y hielo del stock real, adaptándose de inmediato al rubro.</span>**
 - **2026-11-19 (Corrección de Audio e Idioma):**
   ~~<span style="color:#e11d48">Audio con voz en inglés por defecto que no se entendía</span>~~ **<span style="color:#16a34a">Se implementó `speechService.ts` forzando voces nativas en español argentino (es-AR) o latinoamericano con dicción limpia y velocidad calibrada.</span>**
+- **2026-11-19 (Entrada de Texto y Consultas en Asistente):**
+  ~~<span style="color:#e11d48">Asistente en vista previa interactiva solo permitía pulsar el micrófono o chips fijos</span>~~ **<span style="color:#16a34a">Se incorporó campo de texto dedicado con botón de envío y procesamiento en tiempo real (extracciones de montos, medios de pago QR/transferencia/efectivo, gastos, ventas y consultas de balance en caja).</span>**
