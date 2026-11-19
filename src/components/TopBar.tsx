@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Sparkles,
   Eye,
+  DollarSign,
 } from 'lucide-react';
 import type { AppSettings, SheetTemplate, UserRole, WeatherContext } from '../types';
 
@@ -32,6 +33,7 @@ interface TopBarProps {
   onOpenManual: () => void;
   onSwitchRole: (role: UserRole) => void;
   onOpenOnboarding: () => void;
+  onOpenCurrencies?: () => void;
 }
 
 export function TopBar({
@@ -48,6 +50,7 @@ export function TopBar({
   onOpenManual,
   onSwitchRole,
   onOpenOnboarding,
+  onOpenCurrencies,
 }: TopBarProps) {
   const [now, setNow] = useState(() => new Date());
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
@@ -189,6 +192,19 @@ export function TopBar({
             ) : (
               <span>Activar clima/ubicación</span>
             )}
+          </button>
+
+          {/* Ticker rápido de Cotizaciones (Dólar Hoy / Dolarito) */}
+          <button
+            type="button"
+            className="ambient-chip ambient-chip-btn"
+            onClick={onOpenCurrencies}
+            title="Ver Pizarra completa de Cotizaciones (Dólar, Euro, Real Brasileño)"
+          >
+            <DollarSign size={13} className="text-emerald-400" />
+            <span className="font-mono text-xs">
+              <strong className="text-emerald-400">U$D</strong> $1.640 · <strong className="text-sky-400">R$</strong> $263
+            </span>
           </button>
 
           {/* Acceso rápido a cámara / pistola USB */}

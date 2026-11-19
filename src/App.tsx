@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BookOpen, Mic, Package, Settings, Share2 } from 'lucide-react';
+import { BookOpen, DollarSign, Mic, Package, Settings, Share2 } from 'lucide-react';
 import {
   db,
   DEFAULT_SETTINGS,
@@ -32,6 +32,7 @@ import {
 import { useUsbBarcodeScanner } from './hooks/useUsbBarcodeScanner';
 import { TopBar } from './components/TopBar';
 import { AssistantTab } from './components/AssistantTab';
+import { CurrencyTab } from './components/CurrencyTab';
 import { LedgerTab } from './components/LedgerTab';
 import { StockTab } from './components/StockTab';
 import { SocialTab } from './components/SocialTab';
@@ -407,6 +408,7 @@ export function App() {
 
   const navItems: Array<{ id: ActiveTab; label: string; icon: typeof Mic }> = [
     { id: 'assistant', label: 'Asistente', icon: Mic },
+    { id: 'currencies', label: 'Cotizaciones', icon: DollarSign },
     { id: 'ledger', label: 'Libro Diario', icon: BookOpen },
     { id: 'stock', label: 'Stock', icon: Package },
     { id: 'social', label: 'Redes', icon: Share2 },
@@ -432,6 +434,7 @@ export function App() {
         onOpenManual={() => setManualOpen(true)}
         onSwitchRole={handleSwitchRole}
         onOpenOnboarding={() => setOnboardingOpen(true)}
+        onOpenCurrencies={() => setActiveTab('currencies')}
       />
 
       {/* Navegación Desktop */}
@@ -505,6 +508,20 @@ export function App() {
                 description: data.description,
                 customFields: {},
               });
+            }}
+          />
+        )}
+
+        {activeTab === 'currencies' && (
+          <CurrencyTab
+            settings={settings}
+            products={products}
+            onOpenQuickSale={(amountInPesos, description) => {
+              setEditingEntry(null);
+              setMovementPresetType('venta');
+              setMovementPresetProduct(null);
+              setMovementModalOpen(true);
+              showToast(`Preparando registro de venta: $${amountInPesos.toLocaleString('es-AR')} (${description})`);
             }}
           />
         )}

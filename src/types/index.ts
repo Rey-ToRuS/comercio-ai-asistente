@@ -223,4 +223,4 @@ export interface SocialDraft {
   hook?: string;
 }
 
-export type ActiveTab = 'assistant' | 'ledger' | 'stock' | 'social' | 'settings';
+export type ActiveTab = 'assistant' | 'ledger' | 'stock' | 'currencies' | 'social' | 'settings';

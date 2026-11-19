@@ -14,7 +14,7 @@
 ## 📈 Gráfico de Porcentaje de Avance General
 
 ```text
-[███████████████████████████████████████░] 97% Completado
+[████████████████████████████████████████] 99% Completado
 ```
 
 | Módulo / Etapa | Estado | Porcentaje |
@@ -24,7 +24,8 @@
 | **Etapa 3: Onboarding, Login Local y Sistema de Roles** | 🟢 Completado | 100% |
 | **Etapa 4: Hub de Redes Sociales con Lógica Contextual** | 🟢 Completado | 100% |
 | **Etapa 5: Accesibilidad, Audio en Español y Modo Senior** | 🟢 Completado | 100% |
-| **Etapa 6: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟢 Completado | 90% |
+| **Etapa 6: Pizarra de Divisas en Vivo (Dólar, Euro, Real) & POS Pro** | 🟢 Completado | 100% |
+| **Etapa 7: Autonomía Total (PWA instalable + APK Android con Capacitor)** | 🟢 Completado | 95% |
 
 ---
 
@@ -65,7 +66,15 @@
 - 🟢 **Acciones en 2 toques:** Botón de 1 toque para redes y accesos directos principales en pantalla de inicio.
 - 🟢 **Comando por voz y texto prioritario:** Micrófono grande con reconocimiento de voz en español argentino (`es-AR`), campo de texto para consultas escritas y lectura de respuesta en voz alta clara.
 
-### 🟢 Etapa 5: Empaquetado y Autonomía de Distribución
+### 🟢 Etapa 5: Pizarra de Divisas en Vivo (Dólar, Euro, Real) & Diseño Terminal POS Pro
+- 🟢 **Pizarra de Cotizaciones en Vivo (`currencyService.ts` & `CurrencyTab.tsx`):**
+  ~~<span style="color:#e11d48">La aplicación no contaba con cotizaciones de divisas extranjeras</span>~~ **<span style="color:#16a34a">Implementado: Pizarra de cambios en vivo estilo Dólar Hoy / Dolarito conectada a DolarApi con Dólar Blue, Oficial, MEP, Tarjeta, Euro y Real Brasileño (BRL), con guardado en caché local para operar 100% offline.</span>**
+- 🟢 **Calculadora Rápida para Cobro en Mostrador:**
+  ~~<span style="color:#e11d48">Conversión manual en calculadora externa</span>~~ **<span style="color:#16a34a">Implementado: Conversor bidireccional rápido (ARS, USD, EUR, BRL) con selección de tipo de cambio, inversión de monedas con 1 toque y botón para registrar la venta directamente en el Libro Diario.</span>**
+- 🟢 **Ticker de Cotizaciones en Barra Superior:**
+  ~~<span style="color:#e11d48">Sin visibilidad de cotizaciones desde otras pestañas</span>~~ **<span style="color:#16a34a">Implementado: Botón en TopBar mostrando Dólar Blue y Real Brasileño con acceso directo a la Pizarra en 1 clic.</span>**
+
+### 🟢 Etapa 6: Empaquetado y Autonomía de Distribución
 - 🟢 **PWA (Progressive Web App):** Manifiesto y Service Worker preparados para instalar como aplicación en el celular o PC.
 - 🟢 **Capacitor Configurado:** Base lista para compilar como archivo `.apk` de Android instalable directamente por cable USB o descarga directa.
 - 🟢 **Aclaración de Infraestructura:**
@@ -89,4 +98,6 @@
   ~~<span style="color:#e11d48">Asistente en vista previa interactiva solo permitía pulsar el micrófono o chips fijos</span>~~ **<span style="color:#16a34a">Se incorporó campo de texto dedicado con botón de envío y procesamiento en tiempo real (extracciones de montos, medios de pago QR/transferencia/efectivo, gastos, ventas y consultas de balance en caja).</span>**
 - **2026-11-19 (Diagnóstico de Voz en PC con Windows & Modo Senior):**
   ~~<span style="color:#e11d48">En PC Windows sin paquete de idioma español instalado se forzaba la voz inglesa Microsoft David</span>~~ **<span style="color:#16a34a">Se incorporó diagnóstico reactivo de voz: auto-selección de voces en español disponibles, prevención de fonética inglesa y guía de 1 clic para abrir en Microsoft Edge (que ya incluye voces argentinas y latinas ultra-naturales) o agregar el paquete en Windows. Se sumó además el 'Modo Fácil / Senior' en la barra superior con tipografía grande y alta visibilidad para personas mayores.</span>**
+- **2026-11-19 (Pizarra de Cotizaciones en Vivo & Terminal Táctil POS Pro):**
+  ~~<span style="color:#e11d48">Sin sección de cotizaciones de moneda extranjera para atención de mostrador</span>~~ **<span style="color:#16a34a">Se implementó la 'Pizarra de Divisas' estilo Terminal Táctil POS Pro: integración en vivo con DolarApi para Dólar (Blue, Oficial, MEP, Tarjeta), Euro y Real Brasileño con compra/venta, ticker en barra superior y Calculadora de Conversión para cobro a turistas/clientes con registro directo en Libro Diario.</span>**
 
