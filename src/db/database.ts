@@ -45,6 +45,16 @@ export const DEFAULT_SETTINGS: AppSettings = {
   usbScannerEnabled: true,
   locationEnabled: false,
   autoSyncOnOnline: true,
+  ownerEmail: '',
+  activeRole: 'admin',
+  adminPin: '',
+  onboardingCompleted: false,
+  connectedSocials: {
+    meta: false,
+    tiktok: false,
+    x: false,
+    whatsapp: false,
+  },
 };
 
 export async function initializeDatabase(): Promise<void> {
@@ -56,6 +66,21 @@ export async function initializeDatabase(): Promise<void> {
   const existingSettings = await db.settings.get('main');
   if (!existingSettings) {
     await db.settings.put(DEFAULT_SETTINGS);
+  } else {
+    // Normalizar si le faltan campos de onboarding o roles
+    let needsUpdate = false;
+    const patched: AppSettings = { ...DEFAULT_SETTINGS, ...existingSettings };
+    if (!patched.connectedSocials) {
+      patched.connectedSocials = DEFAULT_SETTINGS.connectedSocials;
+      needsUpdate = true;
+    }
+    if (!patched.activeRole) {
+      patched.activeRole = 'admin';
+      needsUpdate = true;
+    }
+    if (needsUpdate) {
+      await db.settings.put(patched);
+    }
   }
 }
 

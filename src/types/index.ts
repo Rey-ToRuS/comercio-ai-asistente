@@ -132,6 +132,10 @@ export interface WeatherContext {
   updatedAt?: string;
 }
 
+export type UserRole = 'admin' | 'vendedor' | 'administrativo';
+
+export type SocialPlatformId = 'meta' | 'tiktok' | 'x' | 'whatsapp';
+
 export interface AppSettings {
   id: 'main';
   businessName: string;
@@ -149,6 +153,11 @@ export interface AppSettings {
   usbScannerEnabled: boolean;
   locationEnabled: boolean;
   autoSyncOnOnline: boolean;
+  ownerEmail?: string;
+  activeRole: UserRole;
+  adminPin?: string;
+  onboardingCompleted: boolean;
+  connectedSocials: Record<SocialPlatformId, boolean>;
 }
 
 export interface ParsedMovementAction {

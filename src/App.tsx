@@ -15,6 +15,7 @@ import type {
   Product,
   SheetTemplate,
   SocialDraft,
+  UserRole,
   WeatherContext,
 } from './types';
 import {
@@ -39,10 +40,12 @@ import { BarcodeScannerModal } from './components/BarcodeScannerModal';
 import { MovementModal } from './components/MovementModal';
 import { ProductModal } from './components/ProductModal';
 import { ManualModal } from './components/ManualModal';
+import { OnboardingModal } from './components/OnboardingModal';
 import { formatCurrency, formatShortDate, MOVEMENT_TYPE_LABELS } from './utils/format';
 
 export function App() {
   const [ready, setReady] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('assistant');
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [templates, setTemplates] = useState<SheetTemplate[]>(DEFAULT_TEMPLATES);
@@ -98,11 +101,43 @@ export function App() {
     setProducts(loadedProducts);
     setLedger(loadedLedger);
     setPendingSyncCount(queueCount);
+    return loadedSettings;
   }, []);
+
+  const handleSwitchRole = useCallback(
+    async (newRole: UserRole) => {
+      if (newRole === 'admin' && settings.adminPin) {
+        const inputPin = window.prompt('Ingresá el PIN de Administrador de 4 dígitos:');
+        if (inputPin !== settings.adminPin) {
+          showToast('PIN incorrecto. No se cambió el rol.');
+          return;
+        }
+      }
+      const updated = { ...settings, activeRole: newRole };
+      setSettings(updated);
+      await db.settings.put(updated);
+      showToast(`Rol activo: ${newRole.toUpperCase()}`);
+    },
+    [settings, showToast]
+  );
+
+  const handleCompleteOnboarding = useCallback(
+    async (finalSettings: AppSettings) => {
+      setSettings(finalSettings);
+      await db.settings.put(finalSettings);
+      setOnboardingOpen(false);
+      showToast(`¡Configuración de ${finalSettings.businessName} guardada con éxito!`);
+      await refreshAllData();
+    },
+    [refreshAllData, showToast]
+  );
 
   useEffect(() => {
     initializeDatabase().then(async () => {
-      await refreshAllData();
+      const loaded = await refreshAllData();
+      if (!loaded?.onboardingCompleted) {
+        setOnboardingOpen(true);
+      }
       setReady(true);
     });
   }, [refreshAllData]);
@@ -395,6 +430,8 @@ export function App() {
           setScannerOpen(true);
         }}
         onOpenManual={() => setManualOpen(true)}
+        onSwitchRole={handleSwitchRole}
+        onOpenOnboarding={() => setOnboardingOpen(true)}
       />
 
       {/* Navegación Desktop */}
@@ -529,6 +566,7 @@ export function App() {
             settings={settings}
             template={activeTemplate}
             onSaveDraft={handleSaveSocialDraft}
+            onUpdateSettings={handleUpdateSettings}
             onToast={showToast}
           />
         )}
@@ -543,7 +581,9 @@ export function App() {
             onSaveTemplate={handleSaveTemplate}
             onSyncNow={handleSyncNow}
             onToast={showToast}
-            onDataImported={refreshAllData}
+            onDataImported={async () => {
+              await refreshAllData();
+            }}
           />
         )}
       </main>
@@ -610,6 +650,13 @@ export function App() {
           setActiveTab('assistant');
           setQueuedCommand(example);
         }}
+      />
+
+      <OnboardingModal
+        isOpen={onboardingOpen}
+        templates={templates}
+        initialSettings={settings}
+        onComplete={handleCompleteOnboarding}
       />
 
       {/* Notificaciones Toast */}

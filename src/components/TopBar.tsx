@@ -9,8 +9,13 @@ import {
   Wifi,
   WifiOff,
   Clock,
+  Shield,
+  Tag,
+  FileSpreadsheet,
+  ChevronDown,
+  Sparkles,
 } from 'lucide-react';
-import type { AppSettings, SheetTemplate, WeatherContext } from '../types';
+import type { AppSettings, SheetTemplate, UserRole, WeatherContext } from '../types';
 
 interface TopBarProps {
   settings: AppSettings;
@@ -24,6 +29,8 @@ interface TopBarProps {
   onSyncNow: () => void;
   onOpenScanner: () => void;
   onOpenManual: () => void;
+  onSwitchRole: (role: UserRole) => void;
+  onOpenOnboarding: () => void;
 }
 
 export function TopBar({
@@ -38,8 +45,11 @@ export function TopBar({
   onSyncNow,
   onOpenScanner,
   onOpenManual,
+  onSwitchRole,
+  onOpenOnboarding,
 }: TopBarProps) {
   const [now, setNow] = useState(() => new Date());
+  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -59,6 +69,16 @@ export function TopBar({
 
   const placeLabel = [weather.neighborhood, weather.city].filter(Boolean).join(', ');
 
+  const activeRole = settings.activeRole || 'admin';
+
+  const roleLabels: Record<UserRole, { label: string; icon: typeof Shield; colorClass: string }> = {
+    admin: { label: 'Admin', icon: Shield, colorClass: 'text-emerald-400' },
+    vendedor: { label: 'Vendedor', icon: Tag, colorClass: 'text-sky-400' },
+    administrativo: { label: 'Adminstrativo', icon: FileSpreadsheet, colorClass: 'text-amber-400' },
+  };
+
+  const CurrentRoleIcon = roleLabels[activeRole].icon;
+
   return (
     <header className="topbar">
       <div className="topbar-inner">
@@ -69,6 +89,49 @@ export function TopBar({
           <div className="brand-titles">
             <span className="brand-name">{settings.businessName || 'Mi Comercio'}</span>
             <span className="brand-subtitle">{template.name}</span>
+          </div>
+
+          {/* Selector de Rol de Trabajo Activo */}
+          <div className="relative ml-2">
+            <button
+              type="button"
+              onClick={() => setRoleMenuOpen(!roleMenuOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800 text-xs font-semibold text-slate-200 hover:border-slate-600 transition-colors"
+              title="Cambiar de Rol de Trabajo"
+            >
+              <CurrentRoleIcon size={12} className={roleLabels[activeRole].colorClass} />
+              <span>{roleLabels[activeRole].label}</span>
+              <ChevronDown size={12} className="text-slate-400" />
+            </button>
+
+            {roleMenuOpen && (
+              <div className="absolute left-0 top-full mt-1.5 w-44 rounded-xl border border-slate-700 bg-slate-900 p-1.5 shadow-2xl z-50 animate-fade-in text-xs space-y-0.5">
+                <div className="px-2 py-1 text-[10px] uppercase font-bold text-slate-500">
+                  Cambiar Rol:
+                </div>
+                {(['admin', 'vendedor', 'administrativo'] as UserRole[]).map((r) => {
+                  const Icon = roleLabels[r].icon;
+                  return (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => {
+                        onSwitchRole(r);
+                        setRoleMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors ${
+                        activeRole === r
+                          ? 'bg-slate-800 text-white font-bold'
+                          : 'text-slate-300 hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <Icon size={13} className={roleLabels[r].colorClass} />
+                      <span>{roleLabels[r].label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -150,6 +213,17 @@ export function TopBar({
                 ? `Offline (${pendingSyncCount})`
                 : 'Offline'}
             </span>
+          </button>
+
+          {/* Asistente de configuración inicial / negocio */}
+          <button
+            type="button"
+            className="ambient-chip ambient-chip-btn"
+            onClick={onOpenOnboarding}
+            title="Configurar Comercio, IA y Roles"
+          >
+            <Sparkles size={14} className="text-emerald-400" />
+            <span>Configurar</span>
           </button>
 
           {/* Manual de uso offline */}
