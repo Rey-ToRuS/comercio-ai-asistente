@@ -77,3 +77,5 @@
   ~~<span style="color:#e11d48">Configuración dispersa en pestaña de ajustes</span>~~ **<span style="color:#16a34a">Se implementó el Wizard de Onboarding Inicial en primer inicio con Email + Vinculación de IA + Tipo de Negocio + Asignación de Roles (Admin, Vendedor, Administrativo) y PIN de seguridad.</span>**
 - **2026-11-19 (Redes Sociales):**
   ~~<span style="color:#e11d48">Generación de texto simple con botón de copiar al portapapeles</span>~~ **<span style="color:#16a34a">Se implementó el panel con vinculación a Meta, TikTok, X y WhatsApp, botón de 1 toque con stock real, previsualización interactiva con mockup realista y confirmación de publicación automática.</span>**
+- **2026-11-19 (Operatividad y Prueba en Vivo):**
+  ~~<span style="color:#e11d48">Aplicación requería build y hosting externo para ser visualizada</span>~~ **<span style="color:#16a34a">Servidor de previsualización local activo en puerto 5173 para probar de forma interactiva el onboarding, los roles y la operativa offline en tiempo real.</span>**
